@@ -6,18 +6,15 @@ import java.util.ArrayList;
 public class ParticleTest extends PApplet {
 
     int[] flamePalette = new int[256];
-    Slider slider1;
-    Slider slider2;
-    Slider slider3;
-    float wiggle = 45;
+    Slider slider1 = new Slider(10,550, 160, 30, 10, 100, "Intensity");;
+    Slider slider2 = new Slider(220,550, 160, 30, 40, 100, "Size");
+    Slider slider3 = new Slider(430,550, 160, 30, 40, 100, "N/A");
+    float intensity = 45;
     float size = 70;
-    ParticleSystem ps;
+    ParticleSystem ps = new ParticleSystem(new PVector(300, 400));
 
     public void settings() {
         size(600, 600);
-        ps = new ParticleSystem(new PVector(300, 400));
-        slider1 = new Slider(10,550, 160, 30, 10, 100, "Wiggle");
-        slider2 = new Slider(430,550, 160, 30, 40, 100, "Size");
     }
 
     public void draw(){
@@ -25,7 +22,7 @@ public class ParticleTest extends PApplet {
         if( mousePressed) {
             boolean isChanged = slider1.checkPressed(mouseX, mouseY);
             if (isChanged) {
-                wiggle = slider1.sliderVal;
+                intensity = slider1.sliderVal;
             }
         }
         slider1.display();
@@ -36,8 +33,16 @@ public class ParticleTest extends PApplet {
             }
         }
         slider2.display();
+        if( mousePressed) {
+            boolean isChanged = slider3.checkPressed(mouseX, mouseY);
+            if (isChanged) {
+                //size = slider3.sliderVal;
+            }
+        }
+        slider3.display();
         ps.addParticle();
-        ps.addParticle();   // second particle is just there to make the fire "meatier"
+        ps.addParticle();
+        ps.addParticle();   // extra particles are just there to make the fire "meatier"
         ps.run();
     }
 
@@ -48,7 +53,7 @@ public class ParticleTest extends PApplet {
 
     class Particle {
         PVector position;
-        PVector velocity = new PVector(wiggle*random((float) -0.005, 0.005F), wiggle/50*random((float) -1, 0));
+        PVector velocity = new PVector(intensity*random((float) -0.005, 0.005F), intensity/50*random((float)-1, 0));
         final PVector acceleration = new PVector(0,-0.025F);
         int lifespan;
         int color;
@@ -66,7 +71,7 @@ public class ParticleTest extends PApplet {
         void update() {
             velocity.add(acceleration);
             position.add(velocity);
-            position.add((randomGaussian()*wiggle/100), (float) (randomGaussian()*wiggle/100 - 1.0)); // wiggle factor
+            position.add((randomGaussian()* intensity /100), (float) (randomGaussian()* intensity /100 - 1.0)); // wiggle factor
             lifespan -= 5.0/size*50;
             if (lifespan > 0) { // since flamePalette is only initialized from 0 to 256, the program will crash if lifespan is <0
                 color = flamePalette[lifespan];
@@ -124,7 +129,6 @@ public class ParticleTest extends PApplet {
         float sliderVal;
         String label;
 
-
         Slider( float x, float y, float w, float h, float min, float max, String label) {
             this.x = x;
             this.y = y;
@@ -134,42 +138,35 @@ public class ParticleTest extends PApplet {
             this.max = max;
             this.label = label;
 
-            sliderX = x + (w/2);
+            sliderX = x + (w/2); // makes it so that bar starts in the center of the slider
             sliderVal = map( sliderX, x, x+w, min, max);
-
-        }
-
-        //display split into 2 methods, the background layer displays
-        void display() {
-            backgroundLayer();
-
-            fill(200, 200, 200);
-            rect( x, y, w, h);   //slider rectangle  - this is changed in child classes
-
-            fill(150, 150, 150); //indicator rectangle
-            rect( sliderX-2, y-3, 4, h + 6);
         }
 
         void backgroundLayer() {
-            pushStyle();
-            fill( 100);
-            rect( x-10, y-20, w+20, h+40);  ////outer background rectangle
-            fill( 200, 200, 200);  //fill for the text
+            fill(100);
+            rect(x-10, y-20, w+20, h+40);  ////outer background rectangle
+            fill(220);  //fill for the text
             textAlign(CENTER);
             textSize(14);
-            text( label, x+(w/2), y+h +15);
-            popStyle();
+            text(label, x+(w/2), y+h +15);
         }
 
-        //test mouse coordinates to determine if within the slider rectangle
-        //if not changed, return false
-        //set sliderX to current mouseX position
+        void display() {
+            backgroundLayer();
+
+            fill(200);
+            rect(x, y, w, h);   //slider rectangle
+
+            fill(150); //slider bar/cursor
+            rect(sliderX-2, y-3, 4, h + 6);
+        }
+
         boolean checkPressed(int mx, int my) {
             boolean isChanged = false;
-            if ( mx >= x && mx <= x+w && my> y && my< y +h) { //test for >= so endpoints are included
+            if ( mx >= x && mx <= x+w && my> y && my< y +h) {
                 isChanged = true;
                 sliderX = mx;
-                sliderVal = map( sliderX, x, x+w, min, max);
+                sliderVal = map(sliderX, x, x+w, min, max);
             }
             return isChanged;
         }
