@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class ParticleTest extends PApplet {
 
     int[] flamePalette = new int[256];
-    Slider slider1 = new Slider(10,550, 160, 30, 10, 100, "Intensity");;
+    Slider slider1 = new Slider(10,550, 160, 30, 10, 100, "Intensity");
     Slider slider2 = new Slider(220,550, 160, 30, 40, 100, "Size");
     Slider slider3 = new Slider(430,550, 160, 30, 40, 100, "N/A");
     float intensity = 45;
