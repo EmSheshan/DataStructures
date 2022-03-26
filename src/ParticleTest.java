@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -7,10 +8,11 @@ public class ParticleTest extends PApplet {
 
     int[] flamePalette = new int[256];
     Slider slider1 = new Slider(10,550, 160, 30, 10, 100, "Intensity");
-    Slider slider2 = new Slider(220,550, 160, 30, 40, 100, "Size");
-    Slider slider3 = new Slider(430,550, 160, 30, 40, 100, "N/A");
+    Slider slider2 = new Slider(220,550, 160, 30, 40, 100, "Age");
+    Slider slider3 = new Slider(430,550, 160, 30, 1, 7, "Strength");
     float intensity = 45;
-    float size = 70;
+    float age = 70;
+    float strength = 4;
     ParticleSystem ps = new ParticleSystem(new PVector(300, 400));
 
     public void settings() {
@@ -19,7 +21,7 @@ public class ParticleTest extends PApplet {
 
     public void draw(){
         background(0);  // sets bg to black
-        if( mousePressed) {
+        if(mousePressed) {
             boolean isChanged = slider1.checkPressed(mouseX, mouseY);
             if (isChanged) {
                 intensity = slider1.sliderVal;
@@ -29,20 +31,20 @@ public class ParticleTest extends PApplet {
         if( mousePressed) {
             boolean isChanged = slider2.checkPressed(mouseX, mouseY);
             if (isChanged) {
-                size = slider2.sliderVal;
+                age = slider2.sliderVal;
             }
         }
         slider2.display();
         if( mousePressed) {
             boolean isChanged = slider3.checkPressed(mouseX, mouseY);
             if (isChanged) {
-                //size = slider3.sliderVal;
+                strength = slider3.sliderVal;
             }
         }
         slider3.display();
-        ps.addParticle();
-        ps.addParticle();
-        ps.addParticle();   // extra particles are just there to make the fire "meatier"
+        for (int i = 0; i < (int )strength; i++) {
+            ps.addParticle();
+        }   // extra particles are just there to make the fire "meatier"
         ps.run();
     }
 
@@ -57,10 +59,11 @@ public class ParticleTest extends PApplet {
         final PVector acceleration = new PVector(0,-0.025F);
         int lifespan;
         int color;
+        PImage img;
 
         Particle(PVector l) {
             position = l.copy();
-            lifespan = (int) (256*size/100);
+            lifespan = (int) (256*age/100);
         }
 
         void run() {
@@ -72,7 +75,7 @@ public class ParticleTest extends PApplet {
             velocity.add(acceleration);
             position.add(velocity);
             position.add((randomGaussian()* intensity /100), (float) (randomGaussian()* intensity /100 - 1.0)); // wiggle factor
-            lifespan -= 5.0/size*50;
+            lifespan -= 5.0/age*50;
             if (lifespan > 0) { // since flamePalette is only initialized from 0 to 256, the program will crash if lifespan is <0
                 color = flamePalette[lifespan];
             }
@@ -99,10 +102,10 @@ public class ParticleTest extends PApplet {
 
             for (int i=0; i<64; i++)
             {
-                flamePalette[i]  = color(i*2, 0, 0, i*3); // Black to red
-                flamePalette[i+64]  = color(255, i*2, 0);                   // Red to yellow
-                flamePalette[i+128]  = color(255, 255, i*2);                // Yellow to white
-                flamePalette[i+192]  = color(255, 255, 255);                 // White
+                flamePalette[i] = color(i*2, 0, 0, i*3); // Black to red
+                flamePalette[i+64] = color(255, i*2, 0);                  // Red to yellow
+                flamePalette[i+128] = color(255, 255, i*2);               // Yellow to white
+                flamePalette[i+192] = color(255, 255, 255);               // White
             }
         }
 
