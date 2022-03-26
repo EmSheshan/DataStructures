@@ -59,7 +59,6 @@ public class ParticleTest extends PApplet {
         final PVector acceleration = new PVector(0,-0.025F);
         int lifespan;
         int color;
-        PImage img;
 
         Particle(PVector l) {
             position = l.copy();
